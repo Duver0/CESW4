@@ -14,6 +14,9 @@ function Form({
   setEdit,
   saldo,
 }) {
+
+  let count = localStorage.getItem("Count");
+
   const handleInputChange = ({ target }) => {
     setTipo_Movimiento(target.value);
   };
@@ -30,8 +33,19 @@ function Form({
     e.preventDefault();
     if (edit) {
       updateTodo(edit.id, Tipo_Movimiento, Nombre, Cantidad);
+      if (edit.Tipo_Movimiento === "Gasto") {
+        let saldo = parseInt(localStorage.getItem("saldoFinal"));
+        localStorage.setItem("saldoFinal",  parseInt(edit.Cantidad) + parseInt(saldo));
+        console.log(saldo)
+
+        
+      }else{
+        let saldo = parseInt(localStorage.getItem("saldoFinal"));
+        localStorage.setItem("saldoFinal", saldo - edit.Cantidad);
+      }
       saldoFinal(Cantidad, Tipo_Movimiento);
       alert("Se ha actualizado correctamente");
+      counter("");
     } else {
       const newtodo = {
         id: uuid4(),
@@ -44,7 +58,7 @@ function Form({
       setTipo_Movimiento("");
       setNombre("");
       setCantidad("");
-      count("");
+      counter("");
       saldoFinal(Cantidad, Tipo_Movimiento);
       alert("Se ha agregado correctamente");
     }
@@ -67,7 +81,6 @@ function Form({
   };
 
   useEffect(() => {
-    localStorage.setItem("Count", 0);
     if (edit) {
       setTipo_Movimiento(edit.Tipo_Movimiento);
       setNombre(edit.Nombre);
@@ -80,12 +93,10 @@ function Form({
   }, [edit, setTipo_Movimiento, setNombre, setCantidad]);
 
   function getCount() {
-    let count = localStorage.getItem("Count");
     document.getElementById("Count").innerHTML = count;
   }
 
-  function count() {
-    let count = localStorage.getItem("Count");
+  function counter() {
     count++;
     localStorage.setItem("Count", count);
     getCount();
@@ -102,7 +113,7 @@ function Form({
       }
     }
     localStorage.setItem("saldoFinal", saldoInicial);
-
+    localStorage.setItem("Count", 0);
     document.getElementById("saldoInicial").innerHTML = saldoInicial;
     document.getElementById("saldoFinal").innerHTML = saldoInicial;
   }
@@ -113,15 +124,13 @@ function Form({
     if (Tipo === "Gasto") {
       if (saldo < saldoFinal) {
         alert("El Gasto es Superior al Restante");
-
         return;
       } else saldo = saldo - saldoFinal;
     } else {
       saldo = saldo + saldoFinal;
     }
     localStorage.setItem("saldoFinal", saldo);
-    let saldoActualizado = localStorage.getItem("saldoFinal");
-    document.getElementById("saldoFinal").innerHTML = saldoActualizado;
+    document.getElementById("saldoFinal").innerHTML = saldo;
   }
 
   return (
