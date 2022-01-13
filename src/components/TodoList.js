@@ -1,7 +1,8 @@
 import TodoItem from "./TodoItem";
+import Form from "./Form";
 
 
-const TodoList = ({ todos, setTodos, setEdit }) => {
+const TodoList = ({ todos, setTodos, setEdit, framework }) => {
   const handleDelete = ({ id }) => {
     setTodos(todos.filter((todo) => todo.id !== id));
     alert("Se ha eliminado correctamente");
@@ -27,7 +28,8 @@ const TodoList = ({ todos, setTodos, setEdit }) => {
           todo={todo}
           handleDelete={handleDelete}
           completed={completed}
-          setEdit={setEdit}          
+          setEdit={setEdit}  
+          framework={framework}    
         />
       ))}
     </div>

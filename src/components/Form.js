@@ -1,5 +1,8 @@
 import { useEffect } from "react";
 import { v4 as uuid4 } from "uuid";
+import {useState} from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import {FormGroup, Label, Input} from "reactstrap";
 
 function Form({
   Tipo_Movimiento,
@@ -12,8 +15,13 @@ function Form({
   setTodos,
   edit,
   setEdit,
-  saldo,
+  saldo
 }) {
+
+  const[framework, setFramework] = useState(1);
+  const cambioRadioFramework=e=>{
+    setFramework(e.target.value);
+  }
 
   let count = localStorage.getItem("Count");
 
@@ -30,15 +38,14 @@ function Form({
   };
 
   const handleSubmit = (e) => {
+
     e.preventDefault();
     if (edit) {
       updateTodo(edit.id, Tipo_Movimiento, Nombre, Cantidad);
       if (edit.Tipo_Movimiento === "Gasto") {
         let saldo = parseInt(localStorage.getItem("saldoFinal"));
         localStorage.setItem("saldoFinal",  parseInt(edit.Cantidad) + parseInt(saldo));
-        console.log(saldo)
-
-        
+        console.log(saldo)        
       }else{
         let saldo = parseInt(localStorage.getItem("saldoFinal"));
         localStorage.setItem("saldoFinal", saldo - edit.Cantidad);
@@ -69,7 +76,7 @@ function Form({
     Tipo_Movimiento,
     Nombre,
     Cantidad,
-    completed,
+    completed
   ) => {
     const newTodos = todos.map((todo) =>
       todo.id === id
@@ -207,15 +214,27 @@ function Form({
         </div>
         <br />
         <div class="row mx-auto">
+        <div class="col-lg-6">
+            <form class="form-inline my-2 my-lg-0">
+              <input
+                class="form-control mr-sm-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+            </form>
+          </div>
           <div class="col-lg-3 form-check ">
             <input
               class="form-check-input"
               type="radio"
-              name="filtro"
-              id="ingreso"
-              value="option2"
+              id="1"
+              name="Ingreso"
+              value="1"
+              checked={framework == 1 ? true : false}
+              onChange={cambioRadioFramework}      
             />
-            <label class="form-check-label" for="ingreso">
+            <label class="form-check-label" for="Ingreso">
               Ingresos
             </label>
           </div>
@@ -223,11 +242,13 @@ function Form({
             <input
               class="form-check-input"
               type="radio"
-              name="filtro"
-              id="gasto"
-              value="option3"
+              id="2"
+              name="Gasto"
+              value="2"
+              checked={framework == 2 ? true : false}
+              onChange={cambioRadioFramework}  
             />
-            <label class="form-check-label" for="gasto">
+            <label class="form-check-label" for="Gasto">
               Gastos
             </label>
           </div>
