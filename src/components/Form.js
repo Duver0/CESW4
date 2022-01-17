@@ -14,8 +14,7 @@ function Form({
   todos,
   setTodos,
   edit,
-  setEdit,
-  saldo
+  setEdit
 }) {
 
   const[framework, setFramework] = useState(1);
@@ -208,7 +207,7 @@ function Form({
           </div>
           <div class="col-lg-7">
             <button className="button-add" type="submit" id="write">
-              Agregar Movimiento
+            {edit ? "Editar Movimiento" : "Agregar Movimiento"}
             </button>
           </div>
         </div>
