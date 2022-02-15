@@ -7,11 +7,9 @@ const TodoItem = ({
   todo,
   handleDelete,
   setEdit,
-  framework
 }) => {
   return (    
-    <li className="list-item"
-    value={framework ? "Ingreso": "Gasto"}>
+    <li className="list-item">
       <div>
         <button className="button-edit" onClick={() => setEdit(todo)}>
           <FaEdit />
@@ -24,13 +22,13 @@ const TodoItem = ({
         type="text"
         value={todo.Nombre}
         className={`list `}
-        onChange={(e) => e.preventDefault, framework}
+        onChange={(e) => e.preventDefault}
       />
       <input
         type="text"
         value={todo.Cantidad}
         className={`list ${todo.Tipo_Movimiento} Cantidad`}
-        onChange={(e) => e.preventDefault, framework}        
+        onChange={(e) => e.preventDefault}        
       />      
     </li>
   );

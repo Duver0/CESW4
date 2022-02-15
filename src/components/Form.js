@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { v4 as uuid4 } from "uuid";
-import {useState} from "react";
+import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import {FormGroup, Label, Input} from "reactstrap";
+import { FormGroup, Label, Input } from "reactstrap";
 
 function Form({
   Tipo_Movimiento,
@@ -14,13 +14,42 @@ function Form({
   todos,
   setTodos,
   edit,
-  setEdit
+  setEdit,
+  setTablaBase,
+  tipo,
+  setTipo,
+  nombreb,
+  setNombreB
 }) {
 
-  const[framework, setFramework] = useState(1);
-  const cambioRadioFramework=e=>{
-    setFramework(e.target.value);
-  }
+  const handleInputChange4 = ({ target }) => {
+    setNombreB(target.value);
+    filterChanges(target.value, tipo);
+  };
+
+  const handleInputChange5 = ({ target }) => {
+    setTipo(target.value);
+    filterChanges(nombreb, target.value);
+  };
+
+  const filterChanges = (text, radio) => {
+    var result = todos.filter((elemento) => {
+      if (elemento.Tipo_Movimiento
+        .toString()
+        .toLowerCase()
+        .includes(radio.toString().toLowerCase())
+      ) {
+        if (elemento.Nombre
+          .toString()
+          .toLowerCase()
+          .includes(text.toString().toLowerCase())
+        ) {
+          return elemento;
+        }
+      }
+    });
+    setTablaBase(result);
+  };
 
   let count = localStorage.getItem("Count");
 
@@ -37,15 +66,14 @@ function Form({
   };
 
   const handleSubmit = (e) => {
-
     e.preventDefault();
     if (edit) {
       updateTodo(edit.id, Tipo_Movimiento, Nombre, Cantidad);
       if (edit.Tipo_Movimiento === "Gasto") {
         let saldo = parseInt(localStorage.getItem("saldoFinal"));
-        localStorage.setItem("saldoFinal",  parseInt(edit.Cantidad) + parseInt(saldo));
-        console.log(saldo)        
-      }else{
+        localStorage.setItem("saldoFinal", parseInt(edit.Cantidad) + parseInt(saldo));
+        console.log(saldo)
+      } else {
         let saldo = parseInt(localStorage.getItem("saldoFinal"));
         localStorage.setItem("saldoFinal", saldo - edit.Cantidad);
       }
@@ -61,6 +89,7 @@ function Form({
         completed: false,
       };
       setTodos([...todos, newtodo]);
+      setTablaBase([...todos, newtodo]);
       setTipo_Movimiento("");
       setNombre("");
       setCantidad("");
@@ -68,6 +97,8 @@ function Form({
       saldoFinal(Cantidad, Tipo_Movimiento);
       alert("Se ha agregado correctamente");
     }
+    setTipo("");
+    setNombreB("");
   };
 
   const updateTodo = (
@@ -81,8 +112,9 @@ function Form({
       todo.id === id
         ? { id, Tipo_Movimiento, Nombre, Cantidad, completed }
         : todo
-    );    
+    );
     setTodos(newTodos);
+    setTablaBase(newTodos);
     setEdit(null);
   };
 
@@ -108,11 +140,11 @@ function Form({
     getCount();
   }
 
-  window.onload=function saldo() {
+  window.onload = function saldo() {
     while (true) {
       var saldoInicial = prompt("Ingrese el Saldo Inicial");
       if (!isNaN(saldoInicial) && saldoInicial != null && saldoInicial != "") {
-      break;
+        break;
       } else {
         alert("Solo Puede Insertar Numeros");
         continue;
@@ -198,62 +230,80 @@ function Form({
           </div>
         </div>
         <br />
+
+
         <div class="row text-center ">
           <div class="col-lg-5">
             <button className="button-cancelar" type="reset">
-              {" "}
               Cancelar
             </button>
           </div>
           <div class="col-lg-7">
             <button className="button-add" type="submit" id="write">
-            {edit ? "Editar Movimiento" : "Agregar Movimiento"}
+              {edit ? "Editar Movimiento" : "Agregar Movimiento"}
             </button>
           </div>
         </div>
         <br />
+
         <div class="row mx-auto">
-        <div class="col-lg-6">
-            <form class="form-inline my-2 my-lg-0">
+          <div class="col-lg-6">
+            <div class="form-inline my-2 my-lg-0">
               <input
-                class="form-control mr-sm-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
+                type="text"
+                placeholder="Buscar...."
+                className="task-input"
+                value={nombreb}
+                onChange={handleInputChange4}
               />
-            </form>
+            </div>
           </div>
-          <div class="col-lg-3 form-check ">
-            <input
-              class="form-check-input"
-              type="radio"
-              id="1"
-              name="Ingreso"
-              value="1"
-              checked={framework == 1 ? true : false}
-              onChange={cambioRadioFramework}      
-            />
-            <label class="form-check-label" for="Ingreso">
-              Ingresos
-            </label>
-          </div>
-          <div class="col-lg-3 form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              id="2"
-              name="Gasto"
-              value="2"
-              checked={framework == 2 ? true : false}
-              onChange={cambioRadioFramework}  
-            />
-            <label class="form-check-label" for="Gasto">
-              Gastos
-            </label>
+          <div class="col-lg-6 " onChange={handleInputChange5}>
+            <div class="row">
+              <div class="col-lg-4 form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="filtro"
+                  id="todo"
+                  value=""
+                  checked={tipo === ""}
+                />
+                <label class="form-check-label" for="todo">
+                  Todos
+                </label>
+              </div>
+              <div class="col-lg-4 form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="filtro"
+                  id="ingreso"
+                  value="Ingreso"
+                  checked={tipo === "Ingreso"}
+                />
+                <label class="form-check-label" for="ingreso">
+                  Ingreso
+                </label>
+              </div>
+              <div class="col-lg-4 form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="filtro"
+                  id="gasto"
+                  value="Gasto"
+                  checked={tipo === "Gasto"}
+                />
+                <label class="form-check-label" for="gasto">
+                  Gasto
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </form>
+    </form >
   );
 }
 
